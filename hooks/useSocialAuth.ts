@@ -4,13 +4,15 @@ import { Alert } from "react-native";
 
 const useSocialAuth = () => {
   const [loadingStrategy, setLoadingStrategy] = useState<string | null>(null);
-  const { startSSOFlow } = useSSO({});
+  const { startSSOFlow } = useSSO();
 
   const handleSocialAuth = async (
     strategy: "oauth_google" | "oauth_github" | "oauth_apple",
   ) => {
     if (loadingStrategy) return; // Prevent multiple clicks
     setLoadingStrategy(strategy); // Set the loading state to the current strategy
+
+    console.log("Starting strategy:", strategy);
 
     try {
       const { createdSessionId, setActive } = await startSSOFlow({ strategy });
@@ -29,6 +31,8 @@ const useSocialAuth = () => {
         "Error",
         "An error occurred during social authentication. Please try again.",
       );
+    } finally {
+      setLoadingStrategy(null); // Reset the loading state after the process is complete
     }
   };
 
